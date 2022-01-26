@@ -1,0 +1,15 @@
+version: '3.7'
+services:
+  notes-app-postgres:
+    image: postgres:11.12
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: dani
+      POSTGRES_PASSWORD: psw
+      POSTGRES_DB: Notes-DB
+    volumes:
+      - notes-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  notes-postgres-data:
