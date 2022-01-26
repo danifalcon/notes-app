@@ -1,10 +1,10 @@
 # How to use it
 
 ## Run quarkus app
-mvn clean compile quarkus:dev
+```mvn clean compile quarkus:dev```
 
 ## Run Vue app
-npm run serve
+```npm run serve```
 
 ## Create users
 The only way to create users it's calling the endpoint provided for it under the path (http://localhost:8080/users) with a POST request.
