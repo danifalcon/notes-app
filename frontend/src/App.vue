@@ -9,15 +9,9 @@
     </div>
     <hr>
     <createNotesForm :authToken="this.authToken"/>
-    <div class="login-container">
-      <form ref="login-form">
-        <label for="username">Username: </label><input type="text" id="username" v-model="username" required>
-        <label for="password">Password: </label><input type="text" id="password" v-model="password" required>
-        <button type="button" @click="login()">Log in</button>
-      </form>
-    </div>
+    <loginForm/>
     <div>
-      <h3>Logged user is -> {{ loggedUser }}</h3>
+      <h3>Logged user is -> {{ this.loggedUser }}</h3>
     </div>
   </div>
 </template>
@@ -25,17 +19,16 @@
 <script>
 import axios from "axios";
 import CreateNotesForm from "@/components/CreateNotesForm";
+import LoginForm from "@/LoginForm";
 
 export default {
   name: 'HelloWorld',
-  components: {CreateNotesForm},
+  components: {LoginForm, CreateNotesForm},
   props: [],
   data() {
     return {
       loggedUser: null,
       authToken: null,
-      username: null,
-      password: null,
       notes: []
     }
   },
@@ -46,18 +39,12 @@ export default {
     this.$root.$on('getNotes', () => {
       this.getAllNotes();
     });
+    this.$root.$on('loginSuccessful', () => {
+      this.authToken = localStorage.getItem('token');
+      this.loggedUser = localStorage.getItem('loggedUser');
+    });
   },
   methods: {
-    login() {
-      axios.post('http://localhost:8080/login', {
-        username: this.username,
-        password: this.password
-      }).then((response) => {
-        this.authToken = response.data;
-        this.loggedUser = this.username;
-        this.getAllNotes();
-      });
-    },
     getAllNotes() {
       axios.get('http://localhost:8080/notes').then((response) => {
         this.notes = response.data;
@@ -82,15 +69,5 @@ export default {
   padding: 5px 5px;
   display: inline-block;
   margin: 5px 5px
-}
-
-.login-container {
-  position: fixed;
-  margin-top: 20%;
-  display: block;
-}
-
-.login-container form input {
-  display: block;
 }
 </style>
