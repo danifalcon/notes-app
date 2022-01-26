@@ -8,11 +8,7 @@
       </div>
     </div>
     <hr>
-    <form ref="note-form">
-      <label for="title">Title: </label><input type="text" id="title" v-model="titleInput" required>
-      <label for="message">Message: </label><input type="text" id="message" v-model="messageInput" required>
-      <button type="button" @click="createNote()">Save</button>
-    </form>
+    <createNotesForm :authToken="this.authToken"/>
     <div class="login-container">
       <form ref="login-form">
         <label for="username">Username: </label><input type="text" id="username" v-model="username" required>
@@ -28,23 +24,28 @@
 
 <script>
 import axios from "axios";
+import CreateNotesForm from "@/components/CreateNotesForm";
 
 export default {
   name: 'HelloWorld',
+  components: {CreateNotesForm},
   props: [],
   data() {
     return {
       loggedUser: null,
       authToken: null,
-      titleInput: null,
-      messageInput: null,
       username: null,
       password: null,
       notes: []
     }
   },
-  async beforeMount() {
+  beforeMount() {
     this.getAllNotes();
+  },
+  mounted() {
+    this.$root.$on('getNotes', () => {
+      this.getAllNotes();
+    });
   },
   methods: {
     login() {
@@ -61,26 +62,6 @@ export default {
       axios.get('http://localhost:8080/notes').then((response) => {
         this.notes = response.data;
       });
-    },
-    createNote() {
-      axios.post('http://localhost:8080/notes', {
-            title: this.titleInput,
-            message: this.messageInput
-          },
-          {
-            headers: {
-              Authorization: 'bearer ' + this.authToken
-            }
-          }).then((response) => {
-        if (response.status === 200) {
-          this.getAllNotes();
-          this.clearFormInputs();
-        }
-      });
-    },
-    clearFormInputs() {
-      this.titleInput = null;
-      this.messageInput = null;
     }
   }
 }
